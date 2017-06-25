@@ -1,0 +1,2 @@
+defualt:
+	bochs -qf bochsrc
