@@ -16,7 +16,7 @@ init:
 	@mkdir mnt
 	@nasm boot.asm -o boot.bin
 	@nasm loader.asm -o loader.bin
-mkdosfs: init createTestFile
+mkdosfs: init 
 	@dd if=/dev/zero of=x.img bs=512 count=2880
 #	@mkdosfs x.img
 	@dd if=boot.bin  of=x.img bs=512 count=1 conv=notrunc
@@ -27,17 +27,6 @@ mkdosfs: init createTestFile
 header:
 	@xxd -l 512 x.img
 clean:
-	@rm -rf *.bin  *.img mnt *.txt
-createTestFile:
-	@touch a.txt
-	@touch b.txt
-	@touch c.txt
-	@touch d.txt
-	@echo a >> a.txt
-	@echo b >> b.txt
-	@echo c >> c.txt
+	@rm -rf *.bin  *.img mnt 
 run: x.img
 	qemu-system-i386 -vga std -display sdl  -m 32M -drive file=x.img,format=raw,index=0,if=floppy
-help:
-	@echo "=================================="
-	@echo "make header "	

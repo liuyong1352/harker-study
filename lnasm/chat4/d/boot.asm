@@ -12,6 +12,8 @@ BaseOfLoader		equ	09000h	; LOADER.BIN 被加载到的位置 ----  段地址
 OffsetOfLoader 		equ 0100h	; LOADER.BIN 被加载带的位置 ----  偏移地址
 RootDirSectors		equ 14 		; 根目录占用空间
 SectorNoOfRootDirectory	equ	19	; Root Directory 的第一个扇区号
+DeltaSectorNo		equ	17	; DeltaSectorNo = BPB_RsvdSecCnt + (BPB_NumFATs * FATSz) - 2
+					; 文件的开始Sector号 = DirEntry中的开始Sector号 + 根目录占用Sector数目 + DeltaSectorNo
 ;======================================================================
 	jmp short LABEL_START		; Start to boot.
 	nop				; 这个 nop 不可少
@@ -102,7 +104,12 @@ LABEL_NO_LOADERBIN:
 LABEL_FILENAME_FOUND:
 	mov ax , BootMessage
 	mov bp , ax
-	call DispStr 
+	call DispStr
+	mov ax , RootDirSectors 
+	and di , 0FFE0H ; di -> 当前条目的开始
+	add di , 01AH   ; di -> 首 Sector
+	mov cx , word [es:di]  ; 
+		  
 	jmp $ 		;代码暂时停在这里
 
 ;==================================
