@@ -45,7 +45,16 @@ LABEL_START:
 	mov	es, ax
 	mov ss, ax 
 	mov sp , BaseOfStack
-	
+
+	;clear screen
+	mov ax  , 0600h
+	mov bx  , 0700h
+	mov cx , 0
+	mov dx , 0184fh
+	int 10h	
+
+	mov dh , 0 
+	call DispStr  
 ;==================================
 ;软驱复位
 	xor ah , ah 
@@ -97,14 +106,10 @@ LABEL_GOTO_NEXT_SECTOR_IN_ROOT_DIR:
 	add word [wSectorNo] , 1 
 	jmp LABEL_SEARCH_IN_ROOT_DIR_BEGIN
 LABEL_NO_LOADERBIN:
-	mov ax , Message2
-	mov bp , ax 
+	mov dh , 2
 	call DispStr
 	jmp $
 LABEL_FILENAME_FOUND:
-	mov ax , BootMessage
-	mov bp , ax
-	call DispStr
 	mov ax , RootDirSectors 
 	and di , 0FFE0H ; di -> 当前条目的开始
 	add di , 01AH   ; di -> 首 Sector
@@ -143,17 +148,19 @@ BootMessage:		db	"Booting " ; 9字节，不够则用空格补齐. 序号0
 Message1:			db  " "
 Message2:			db  "No Loader" 
 ;==================================
-; es:bp 指向字符串地址
+; show a string , dh  is pointer
 DispStr:
-	push es 
-	mov ax, cs
-	mov es, ax 
+	mov ax , MessageLength
+	mul dh 
+	add ax , BootMessage
+	mov bp , ax 
+	mov ax , ds 
+	mov es , ax 
 	mov	cx, MessageLength	; CX = 串长度
 	mov	ax, 01301h		; AH = 13,  AL = 01h
-	mov	bx, 000ch		; 页号为0(BH = 0) 黑底红字(BL = 0Ch,高亮)
+	mov	bx, 0007h		; 页号为0(BH = 0) 黑底红字(BL = 0Ch,高亮)
 	mov	dl, 0
 	int	10h			; int 10h
-	pop es
 	ret
 
 ;========================================
