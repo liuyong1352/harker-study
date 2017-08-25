@@ -321,7 +321,15 @@ LABEL_PM_START:
 	mov	fs, ax
 	mov	ss, ax
 	mov	esp, TopOfStack
-
+	
+	mov al , 100 
+	call DispAL
+	call DispReturn
+	
+	push 42
+	call DispInt
+	call DispReturn
+	
 	push szMemChkTitle
 	call DispStr
 	add esp , 4  		;平衡堆栈	
@@ -340,12 +348,14 @@ LABEL_DATA:
 ; 实模式下使用这些符号
 ; 字符串
 _szMemChkTitle:	db "BaseAddrL BaseAddrH LengthLow LengthHigh   Type", 0Ah, 0
+_szReturn:	db 0Ah, 0
 _dwDispPos:	dd (80 * 6 + 0) * 2	; 屏幕第 6 行, 第 0 列。
+
 ;
 ;; 保护模式下使用这些符号
 szMemChkTitle		equ	BaseOfLoaderPhyAddr + _szMemChkTitle
 dwDispPos		equ	BaseOfLoaderPhyAddr + _dwDispPos
-
+szReturn 		equ BaseOfLoaderPhyAddr + _szReturn
 
 
 ; 堆栈就在数据段的末尾

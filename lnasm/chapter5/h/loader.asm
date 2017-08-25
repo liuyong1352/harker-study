@@ -31,6 +31,24 @@ LABEL_START:			; <--- 从这里开始 *************
 
 	mov	dh, 0				; "Loading  "
 	call DispStrRealMode	; 显示字符串
+	
+	; 得到内存数
+	mov	ebx, 0			; ebx = 后续值, 开始时需为 0
+	mov	di, _MemChkBuf		; es:di 指向一个地址范围描述符结构(ARDS)
+.MemChkLoop:
+	mov	eax, 0E820h		; eax = 0000E820h
+	mov	ecx, 20			; ecx = 地址范围描述符结构的大小
+	mov	edx, 0534D4150h		; edx = 'SMAP'
+	int	15h			; int 15h
+	jc	.MemChkFail
+	add	di, 20
+	inc	dword [_dwMCRNumber]	; dwMCRNumber = ARDS 的个数
+	cmp	ebx, 0
+	jne	.MemChkLoop
+	jmp	.MemChkOK
+.MemChkFail:
+	mov	dword [_dwMCRNumber], 0
+.MemChkOK:
 
 	; 下面在 A 盘的根目录寻找 KERNEL.BIN
 	mov	word [wSectorNo], SectorNoOfRootDirectory	
@@ -321,16 +339,68 @@ LABEL_PM_START:
 	mov	fs, ax
 	mov	ss, ax
 	mov	esp, TopOfStack
-
+	
+	mov eax , [dwMCRNumber]
+	push eax 
+	call DispInt
+	call DispReturn
+	
 	push szMemChkTitle
 	call DispStr
 	add esp , 4  		;平衡堆栈	
+	
+	call	DispMemInfo
 
 	mov	ah, 0Fh				; 0000: 黑底    1111: 白字
 	mov	al, 'P'
 	mov	[gs:((80 * 0 + 39) * 2)], ax	; 屏幕第 0 行, 第 39 列。
 	jmp	$
 	%include "lib.inc"
+; 显示内存信息 --------------------------------------------------------------
+DispMemInfo:
+	push	esi
+	push	edi
+	push	ecx
+
+	mov	esi, MemChkBuf
+	mov	ecx, [dwMCRNumber];for(int i=0;i<[MCRNumber];i++)//每次得到一个ARDS
+.loop:				  ;{
+	mov	edx, 5		  ;  for(int j=0;j<5;j++)//每次得到一个ARDS中的成员
+	mov	edi, ARDStruct	  ;  {//依次显示:BaseAddrLow,BaseAddrHigh,LengthLow
+.1:				  ;               LengthHigh,Type
+	push	dword [esi]	  ;
+	call	DispInt		  ;    DispInt(MemChkBuf[j*4]); // 显示一个成员
+	pop	eax		  ;
+	stosd			  ;    ARDStruct[j*4] = MemChkBuf[j*4];
+	add	esi, 4		  ;
+	dec	edx		  ;
+	cmp	edx, 0		  ;
+	jnz	.1		  ;  }
+	call	DispReturn	  ;  printf("\n");
+	cmp	dword [dwType], 1 ;  if(Type == AddressRangeMemory)
+	jne	.2		  ;  {
+		mov	eax, [dwBaseAddrLow];
+		add	eax, [dwLengthLow];
+		cmp	eax, [dwMemSize]  ;    if(BaseAddrLow + LengthLow > MemSize)
+	jb	.2		  ;
+	mov	[dwMemSize], eax  ;    MemSize = BaseAddrLow + LengthLow;
+.2:				  ;  }
+	loop	.loop		  ;}
+				  ;
+	call	DispReturn	  ;printf("\n");
+	push	szRAMSize	  ;
+	call	DispStr		  ;printf("RAM size:");
+	add	esp, 4		  ;
+				  ;
+	push	dword [dwMemSize] ;
+	call	DispInt		  ;DispInt(MemSize);
+	add	esp, 4		  ;
+
+	pop	ecx
+	pop	edi
+	pop	esi
+	ret
+; ---------------------------------------------------------------------------
 
 ; SECTION .data1 之开始 ---------------------------------------------------------------------------------------------
 [SECTION .data1]
@@ -339,14 +409,37 @@ ALIGN	32
 LABEL_DATA:
 ; 实模式下使用这些符号
 ; 字符串
+; 实模式下使用这些符号
+; 字符串
 _szMemChkTitle:	db "BaseAddrL BaseAddrH LengthLow LengthHigh   Type", 0Ah, 0
+_szRAMSize:	db "RAM size:", 0
+_szReturn:	db 0Ah, 0
+;; 变量
+_dwMCRNumber:	dd 0	; Memory Check Result
 _dwDispPos:	dd (80 * 6 + 0) * 2	; 屏幕第 6 行, 第 0 列。
+_dwMemSize:	dd 0
+_ARDStruct:	; Address Range Descriptor Structure
+  _dwBaseAddrLow:		dd	0
+  _dwBaseAddrHigh:		dd	0
+  _dwLengthLow:			dd	0
+  _dwLengthHigh:		dd	0
+  _dwType:			dd	0
+_MemChkBuf:	times	256	db	0
 ;
 ;; 保护模式下使用这些符号
 szMemChkTitle		equ	BaseOfLoaderPhyAddr + _szMemChkTitle
+szRAMSize		equ	BaseOfLoaderPhyAddr + _szRAMSize
+szReturn		equ	BaseOfLoaderPhyAddr + _szReturn
 dwDispPos		equ	BaseOfLoaderPhyAddr + _dwDispPos
-
-
+dwMemSize		equ	BaseOfLoaderPhyAddr + _dwMemSize
+dwMCRNumber		equ	BaseOfLoaderPhyAddr + _dwMCRNumber
+ARDStruct		equ	BaseOfLoaderPhyAddr + _ARDStruct
+	dwBaseAddrLow	equ	BaseOfLoaderPhyAddr + _dwBaseAddrLow
+	dwBaseAddrHigh	equ	BaseOfLoaderPhyAddr + _dwBaseAddrHigh
+	dwLengthLow	equ	BaseOfLoaderPhyAddr + _dwLengthLow
+	dwLengthHigh	equ	BaseOfLoaderPhyAddr + _dwLengthHigh
+	dwType		equ	BaseOfLoaderPhyAddr + _dwType
+MemChkBuf		equ	BaseOfLoaderPhyAddr + _MemChkBuf
 
 ; 堆栈就在数据段的末尾
 StackSpace:	times	1024	db	0

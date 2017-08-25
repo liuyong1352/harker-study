@@ -2,7 +2,7 @@ default:
 	gcc -g -m32 -c bootmsw.s
 	ld -melf_i386 -Tbootloader_x86.ld  bootmsw.o -o boot
 	objcopy -R .pdr -R .comment -R.note -S -O binary boot boot.bin
-	qemu-system-i386   -m 129M -fda boot.bin  -boot a
+	qemu-system-i386  -m 129M -fda boot.bin  -boot a
 test:
 	gcc -g -m32 -c test.s
 	ld -melf_i386 -Tbootloader_x86.ld  test.o -o boot
