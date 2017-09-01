@@ -1,27 +1,3 @@
-rm -rf kernel/.kernel.asm.swp 
-vim kernel/kernel.asm 
-cd chapter6/d/
-ls -al
-rm -f kernel/.kernel.asm.swp 
-vim kernel/kernel.asm 
-make
-cd ..
-cd d
-make clean
-ls -al
-cd ..
-cp -R d f
-cd f/
-ls -al
-vim kernel/main.c 
-vim include/proto.h 
-vim include/global.h 
-vim include/protect.h 
-vim include/const.h 
-vim include/proc.h 
-vim kernel/global.c 
-make
-vim kernel/main.c 
 make
 cd chapter6/
 ls -al
@@ -498,3 +474,27 @@ vim include/const.h
 vim kernel/main.c 
 vim kernel/proc.c 
 make
+pwd
+ls -al
+mkdir chaper7
+cp -R chapter6/r chaper7/a
+cd chaper7/a/
+ls -al
+make clean
+vim kernel/i8259.c 
+vim kernel/keyboard.c
+vim include/proto.h 
+vim kernel/main.c 
+vim Makefile 
+make
+vim kernel/keyboard.c 
+make
+cd ..
+ls -al
+cd a
+make clean
+cd ..
+cd a/
+ls -al
+vim kernel/keyboard.c 
+vim kernel/keyboard.c 

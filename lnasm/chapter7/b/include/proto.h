@@ -13,6 +13,7 @@ void delay(int time);
 void TestA();
 void TestB();
 void TestC();
+void task_tty();
 
 void disable_irq(int irq);
 void	enable_irq(int irq);
@@ -26,3 +27,8 @@ int get_ticks();
 
 void milli_delay(int milli_sec);
 void schedule() ;
+void init_keyboard() ; 
+void init_clock() ; 
+void keyboard_read() ; 
+void enable_int();
+void disable_int();

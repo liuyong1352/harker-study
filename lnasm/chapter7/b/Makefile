@@ -23,7 +23,8 @@ DASMFLAGS	= -u -o $(ENTRYPOINT) -e $(ENTRYOFFSET)
 BOOT	= boot/boot.bin boot/loader.bin
 KERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/start.o kernel/global.o lib/kliba.o lib/string.o lib/klib.o kernel/protect.o\
-	kernel/i8259.o kernel/main.o kernel/clock.o kernel/proc.o kernel/syscall.o
+	kernel/i8259.o kernel/main.o kernel/clock.o kernel/proc.o kernel/syscall.o kernel/keyboard.o\
+	 kernel/tty.o
 INCS	= include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h\
 	include/global.h
 DASMOUTPUT	= kernel.bin.asm
@@ -65,6 +66,10 @@ kernel/main.o: kernel/main.c $(INCS)
 kernel/clock.o: kernel/clock.c $(INCS)
 	$(CC) $(CFLAGS) -o $@ $<
 kernel/proc.o: kernel/proc.c $(INCS)
+	$(CC) $(CFLAGS) -o $@ $<
+kernel/keyboard.o: kernel/keyboard.c $(INCS)
+	$(CC) $(CFLAGS) -o $@ $<
+kernel/tty.o: kernel/tty.c $(INCS)
 	$(CC) $(CFLAGS) -o $@ $<
 
 lib/kliba.o : lib/kliba.asm

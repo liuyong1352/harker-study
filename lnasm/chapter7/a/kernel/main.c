@@ -55,13 +55,14 @@ int kernel_main()
 	proc_table[0].ticks = proc_table[0].priority = 15 ;
 	proc_table[1].ticks = proc_table[1].priority = 5 ;
 	proc_table[2].ticks = proc_table[2].priority = 3 ;
-
+	/*
 	disp_pos = 0;
 	for (i = 0; i < 80*25; i++) {
 		disp_str(" ");
 	}
 	disp_pos = 0;
-		
+	*/
+	init_keyboard();	
 	restart();
 	while(1){}
 }
@@ -70,7 +71,7 @@ void TestA()
 {
 	int i = 0;
 	while(1){
-		disp_str("A.");
+//		disp_str("A.");
 		milli_delay(20);
 	}
 }
@@ -80,7 +81,7 @@ void TestB()
 	int i = 0x1000;
 	while(1){
 
-		disp_str("B.");
+//		disp_str("B.");
 		milli_delay(20);
 	}
 }
@@ -89,7 +90,7 @@ void TestC()
 {
 	int i = 0x2000;
 	while(1){
-		disp_str("C.");
+//		disp_str("C.");
 		milli_delay(20);
 	}
 }
