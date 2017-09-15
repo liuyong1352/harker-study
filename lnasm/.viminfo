@@ -8,20 +8,37 @@
 # hlsearch on (H) or off (h):
 ~h
 # 上个 Search 图案：
-~MSle0~/*======================================================================*
+~MSle0~/sys_call
+
+# 上个 替换 Search 图案：
+~MSle0&PRIVATE
 
 # 最后替换的字符串
-$
+$static
 
 # 命令行 历史记录 (从新到旧)：
 :wq
 :q
+:/sys_call
+:sys_call
+:tty_wri
+:tty_write
 :w
+:/init
+:/in_pro
+:1,$s/PRIVATE/static
+:s 1,23/PRIVATE/static/
+:s 1,23/PRIVATE/static
+:s\
 :!
 :!q
 :wNext
 
 # 查找字符串 历史记录 (从新到旧)：
+? sys_call
+? init
+? in_pro
+? PRIVATE
 ? @$
 ?/*======================================================================*
 
@@ -33,161 +50,900 @@ $
 
 # 寄存器:
 "0	LINE	0
-	kernel/keyboard.o: kernel/keyboard.c $(INCS)
-		$(CC) $(CFLAGS) -o $@ $<
+	_NR_write	equ 1
 ""1	LINE	0
-		if(scan_code == 0xE1) {
-		} 
-		else if(scan_code == 0xE0){
-		} 
-		else {
-			make = ((scan_code & FLAG_BREAK) ? FALSE :TRUE);
-			if(make){
-				output[0] = keymap[(scan_code & 0x7F)* MAP_COLS];
-				disp_str(output);
-			}
-		}
+	_NR_get_ticks	equ 0
 "2	LINE	0
-			disp_int(scan_code);
-"3	LINE	0
-		{task_tty , STACK_SIZE_TTY , "tty"}
-"4	LINE	0
-	init_keyboard();	
-"5	LINE	0
-		 /* 初始化 8253 PIT */
-		out_byte(TIMER_MODE, RATE_GENERATOR);
-		out_byte(TIMER0, (u8) (TIMER_FREQ/HZ) );
-		out_byte(TIMER0, (u8) ((TIMER_FREQ/HZ) >> 8));
 	
-		put_irq_handler(CLOCK_IRQ , clock_handler);
-		enable_irq(CLOCK_IRQ);
+"3	LINE	0
+		ret
+"4	LINE	0
+		int INT_VECTOR_SYS_CALL
+"5	LINE	0
+		mov	eax ,	_NR_get_ticks
 "6	LINE	0
-		if(kb_in.p_head == kb_in.buf + KB_IN_BYTES){
-			kb_in.p_head = kb_in.buf ;
-		}
+	get_ticks:
 "7	LINE	0
-		disp_int(scan_code);	
+			milli_delay(200);
 "8	LINE	0
-		kb_in.p_tail = buf ; 
+			milli_delay(200);
 "9	LINE	0
-	//	disp_str("*");
+		set_video_start_addr(console_table[nr_console].current_start_addr);
 "-	CHAR	0
-	p
+	v
 
 # 文件标记:
-'0  52  1  ~/chapter7/c/kernel/keyboard.c
-'1  55  48  ~/chapter7/c/kernel/keyboard.c
-'2  55  43  ~/chapter7/c/kernel/keyboard.c
-'3  9  0  ~/chapter7/c/include/keyboard.h
-'4  19  14  ~/chapter7/c/include/const.h
-'5  55  19  ~/chapter7/c/kernel/keyboard.c
-'6  19  36  ~/chapter7/b/kernel/global.c
-'7  40  0  ~/chapter7/b/kernel/main.c
-'8  1  0  ~/chapter7/b/kernel/main.c
-'9  48  0  ~/chapter7/b/kernel/main.c
+'0  4  14  ~/chapter8/a/kernel/syscall.asm
+'1  74  23  ~/chapter7/o/kernel/main.c
+'2  69  0  ~/chapter7/o/kernel/main.c
+'3  99  0  ~/chapter7/o/kernel/console.c
+'4  23  30  ~/chapter7/o/kernel/main.c
+'5  17  0  ~/chapter7/o/kernel/global.c
+'6  52  2  ~/chapter7/o/include/proc.h
+'7  18  34  ~/chapter7/o/kernel/global.c
+'8  6  0  ~/chapter7/o/kernel/main.c
+'9  1  0  ~/chapter7/o/kernel/main.
 
 # 跳转列表 (从新到旧):
--'  52  1  ~/chapter7/c/kernel/keyboard.c
--'  1  0  ~/chapter7/c/kernel/keyboard.c
--'  55  48  ~/chapter7/c/kernel/keyboard.c
--'  10  0  ~/chapter7/c/kernel/keyboard.c
--'  9  0  ~/chapter7/c/include/keyboard.h
--'  1  0  ~/chapter7/c/include/keyboard.h
--'  19  14  ~/chapter7/c/include/const.h
--'  1  0  ~/chapter7/c/include/const.h
--'  19  36  ~/chapter7/b/kernel/global.c
--'  1  0  ~/chapter7/b/kernel/global.c
--'  40  0  ~/chapter7/b/kernel/main.c
--'  49  0  ~/chapter7/b/kernel/main.c
--'  1  0  ~/chapter7/b/kernel/main.c
--'  48  0  ~/chapter7/b/kernel/main.c
--'  72  23  ~/chapter7/b/Makefile
--'  1  0  ~/chapter7/b/Makefile
--'  27  13  ~/chapter7/b/Makefile
--'  34  18  ~/chapter7/b/include/proto.h
--'  1  0  ~/chapter7/b/include/proto.h
--'  50  36  ~/chapter7/b/include/proc.h
--'  1  0  ~/chapter7/b/include/proc.h
--'  154  0  ~/chapter7/b/include/protect.h
--'  1  0  ~/chapter7/b/include/protect.h
--'  1  0  ~/chapter7/b/include/const.h
--'  20  9  ~/chapter7/b/kernel/global.c
--'  16  12  ~/chapter7/b/include/proto.h
--'  8  0  ~/chapter7/b/include/global.h
--'  1  0  ~/chapter7/b/include/global.h
--'  191  3  ~/chapter7/b/lib/kliba.asm
--'  15  16  ~/chapter7/b/lib/kliba.asm
--'  1  0  ~/chapter7/b/lib/kliba.asm
--'  1  0  ~/chapter7/b/lib/klib.asm
--'  32  17  ~/chapter7/b/include/proto.h
--'  39  21  ~/chapter7/b/kernel/keyboard.c
--'  1  0  ~/chapter7/b/kernel/keyboard.c
--'  8  20  ~/chapter7/b/kernel/tty.c
--'  10  0  ~/chapter7/b/kernel/tty.c
--'  13  17  ~/chapter7/b/kernel/tty.c
--'  31  14  ~/chapter7/b/include/proto.h
--'  47  13  ~/chapter7/b/kernel/main.c
--'  12  2  ~/chapter7/b/kernel/clock.c
--'  1  0  ~/chapter7/b/kernel/clock.c
--'  19  0  ~/chapter7/b/kernel/clock.c
--'  72  46  ~/chapter7/b/include/const.h
--'  9  15  ~/chapter7/b/kernel/keyboard.c
--'  8  19  ~/chapter7/b/kernel/keyboard.c
--'  12  0  ~/chapter7/b/kernel/keyboard.c
--'  22  16  ~/chapter7/b/kernel/keyboard.c
--'  8  7  ~/chapter7/b/include/keymap.h
--'  1  0  ~/chapter7/b/include/keymap.h
--'  1  0  ~/chapter7/b/include/keyboard.h
--'  364  0  ~/chapter7/b/include/keymap.h
--'  14  20  ~/chapter7/a/kernel/keyboard.c
--'  1  0  ~/chapter7/a/kernel/keyboard.c
--'  11  15  ~/chapter7/a/kernel/keyboard.c
--'  7  18  ~/chaper7/a/kernel/keyboard.c
--'  1  0  ~/chaper7/a/kernel/keyboard.c
--'  71  0  ~/chaper7/a/Makefile
--'  69  33  ~/chaper7/a/Makefile
--'  1  0  ~/chaper7/a/Makefile
--'  65  16  ~/chaper7/a/kernel/main.c
--'  64  1  ~/chaper7/a/kernel/main.c
--'  1  0  ~/chaper7/a/kernel/main.c
--'  29  22  ~/chaper7/a/include/proto.h
--'  1  0  ~/chaper7/a/include/proto.h
--'  18  23  ~/chaper7/a/kernel/keyboard.c
--'  63  0  ~/chaper7/a/kernel/i8259.c
--'  1  0  ~/chaper7/a/kernel/i8259.c
--'  17  4  ~/chapter6/r/kernel/proc.c
--'  1  0  ~/chapter6/r/kernel/proc.c
--'  95  0  ~/chapter6/r/kernel/main.c
--'  1  0  ~/chapter6/r/kernel/main.c
--'  92  12  ~/chapter6/r/kernel/main.c
--'  19  1  ~/chapter6/r/kernel/clock.c
--'  1  0  ~/chapter6/r/kernel/clock.c
--'  19  14  ~/chapter6/q/kernel/proc.c
--'  1  0  ~/chapter6/q/kernel/proc.c
--'  75  14  ~/chapter6/q/kernel/main.c
--'  1  0  ~/chapter6/q/kernel/main.c
--'  34  70  ~/chapter6/q/include/const.h
--'  1  0  ~/chapter6/q/include/const.h
--'  28  16  ~/chapter6/p/include/proto.h
--'  1  0  ~/chapter6/p/include/proto.h
--'  13  0  ~/chapter6/p/kernel/clock.c
--'  1  0  ~/chapter6/p/kernel/clock.c
--'  23  26  ~/chapter6/p/kernel/proc.c
--'  1  0  ~/chapter6/p/kernel/proc.c
--'  57  49  ~/chapter6/p/kernel/main.c
--'  56  32  ~/chapter6/p/kernel/main.c
--'  1  0  ~/chapter6/p/kernel/main.c
--'  35  14  ~/chapter6/p/include/proc.h
--'  1  0  ~/chapter6/p/include/proc.h
--'  15  1  ~/chapter6/o/kernel/clock.c
--'  1  0  ~/chapter6/o/kernel/clock.c
--'  82  14  ~/chapter6/o/kernel/main.c
--'  1  0  ~/chapter6/o/kernel/main.c
+-'  4  14  ~/chapter8/a/kernel/syscall.asm
+-'  1  0  ~/chapter8/a/kernel/syscall.asm
+-'  74  23  ~/chapter7/o/kernel/main.c
+-'  1  0  ~/chapter7/o/kernel/main.c
+-'  69  0  ~/chapter7/o/kernel/main.c
+-'  99  0  ~/chapter7/o/kernel/console.c
+-'  1  0  ~/chapter7/o/kernel/console.c
+-'  23  30  ~/chapter7/o/kernel/main.c
+-'  17  0  ~/chapter7/o/kernel/global.c
+-'  1  0  ~/chapter7/o/kernel/global.c
+-'  52  2  ~/chapter7/o/include/proc.h
+-'  1  0  ~/chapter7/o/include/proc.h
+-'  18  34  ~/chapter7/o/kernel/global.c
+-'  6  0  ~/chapter7/o/kernel/main.c
+-'  1  0  ~/chapter7/o/kernel/main.
+-'  121  8  ~/chapter7/o/lib/string.asm
+-'  14  12  ~/chapter7/o/lib/string.asm
+-'  1  0  ~/chapter7/o/lib/string.asm
+-'  48  49  ~/chapter7/o/include/proto.h
+-'  1  0  ~/chapter7/o/include/proto.h
+-'  4  20  ~/chapter7/o/include/string.h
+-'  1  0  ~/chapter7/o/include/string.h
+-'  8  21  ~/chapter7/o/include/type.h
+-'  1  0  ~/chapter7/o/include/type.h
+-'  78  13  ~/chapter7/o/Makefile
+-'  1  0  ~/chapter7/o/Makefile
+-'  80  34  ~/chapter7/o/kernel/main.c
+-'  2  0  ~/chapter7/o/kernel/main.c
+-'  348  13  ~/chapter7/o/kernel/kernel.asm
+-'  134  2  ~/chapter7/o/kernel/kernel.asm
+-'  133  26  ~/chapter7/o/kernel/kernel.asm
+-'  61  0  ~/chapter7/o/kernel/kernel.asm
+-'  1  0  ~/chapter7/o/kernel/kernel.asm
+-'  116  37  ~/chapter7/o/kernel/tty.c
+-'  1  0  ~/chapter7/o/kernel/tty.c
+-'  7  12  ~/chapter7/o/kernel/tty.c
+-'  14  0  ~/chapter7/o/kernel/tty.c
+-'  109  0  ~/chapter7/o/kernel/tty.c
+-'  18  14  ~/chapter7/o/kernel/syscall.asm
+-'  1  0  ~/chapter7/o/kernel/syscall.asm
+-'  22  4  ~/chapter7/o/kernel/syscall.asm
+-'  6  68  ~/chapter7/o/kernel/global.c
+-'  91  20  ~/chapter7/o/include/const.h
+-'  1  0  ~/chapter7/o/include/const.h
+-'  45  34  ~/chapter7/o/include/proto.h
+-'  46  0  ~/chapter7/o/kernel/vprintf.c
+-'  1  0  ~/chapter7/o/kernel/vprintf.c
+-'  55  0  ~/chapter7/o/kernel/printf.c
+-'  1  0  ~/chapter7/o/kernel/printf.c
+-'  62  14  ~/chapter7/o/kernel/main.c
+-'  32  13  ~/chapter7/o/include/proc.h
+-'  16  60  ~/chapter7/n/kernel/proc.c
+-'  10  0  ~/chapter7/n/kernel/proc.c
+-'  1  0  ~/chapter7/n/kernel/proc.c
+-'  159  36  ~/chapter7/n/kernel/protect.c
+-'  1  0  ~/chapter7/n/kernel/protect.c
+-'  41  2  ~/chapter7/n/include/proto.h
+-'  1  0  ~/chapter7/n/include/proto.h
+-'  42  2  ~/chapter7/n/include/proto.h
+-'  43  52  ~/chapter7/n/include/proto.h
+-'  61  0  ~/chapter7/n/kernel/main.c
+-'  1  0  ~/chapter7/n/kernel/main.c
+-'  57  0  ~/chapter7/n/kernel/keyboard.c
+-'  1  0  ~/chapter7/n/kernel/keyboard.c
+-'  22  31  ~/chapter7/n/include/global.h
+-'  1  0  ~/chapter7/n/include/global.h
+-'  42  17  ~/chapter7/n/include/proc.h
+-'  1  0  ~/chapter7/n/include/proc.h
+-'  13  27  ~/chapter7/n/kernel/global.c
+-'  1  0  ~/chapter7/n/kernel/global.c
+-'  255  4  ~/chapter7/m/kernel/keyboard.c
+-'  1  0  ~/chapter7/m/kernel/keyboard.c
+-'  187  17  ~/chapter7/m/kernel/keyboard.c
+-'  184  3  ~/chapter7/m/kernel/keyboard.c
+-'  281  13  ~/chapter7/m/kernel/keyboard.c
+-'  47  0  ~/chapter7/m/kernel/keyboard.c
+-'  89  20  ~/chapter7/m/include/const.h
+-'  1  0  ~/chapter7/m/include/const.h
+-'  33  30  ~/chapter7/m/kernel/keyboard.c
+-'  26  21  ~/chapter7/m/kernel/keyboard.c
+-'  87  1  ~/chapter7/l/kernel/console.c
+-'  1  0  ~/chapter7/l/kernel/console.c
+-'  70  2  ~/chapter7/l/kernel/console.c
+-'  68  34  ~/chapter7/l/kernel/console.c
+-'  75  2  ~/chapter7/l/kernel/console.c
+-'  76  24  ~/chapter7/l/kernel/console.c
+-'  69  10  ~/chapter7/l/kernel/console.c
+-'  115  0  ~/chapter7/l/kernel/console.c
+-'  88  13  ~/chapter7/l/kernel/console.c
+-'  29  0  ~/chapter7/l/kernel/console.c
+-'  101  0  ~/chapter7/l/kernel/tty.c
+-'  1  0  ~/chapter7/l/kernel/tty.c
+-'  53  0  ~/chapter7/l/kernel/tty.c
+-'  69  42  ~/chapter7/k/kernel/tty.c
+-'  1  0  ~/chapter7/k/kernel/tty.c
+-'  81  2  ~/chapter7/k/kernel/console.c
+-'  1  0  ~/chapter7/k/kernel/console.c
+-'  85  0  ~/chapter7/k/kernel/console.c
+-'  83  46  ~/chapter7/k/kernel/console.c
 
 # 文件内的标记历史记录 (从新到旧):
 
+> ~/chapter8/a/kernel/syscall.asm
+	"	4	14
+	^	4	15
+	.	4	14
+	+	9	14
+	+	5	10
+	+	13	0
+	+	4	14
+
+> ~/chapter7/o/kernel/main.c
+	"	74	23
+	^	74	24
+	.	74	23
+	+	46	22
+	+	58	1
+	+	56	48
+	+	55	48
+	+	58	27
+	+	59	0
+	+	60	0
+	+	59	12
+	+	60	12
+	+	59	24
+	+	60	24
+	+	99	0
+	+	101	16
+	+	99	7
+	+	92	16
+	+	90	13
+	+	99	11
+	+	90	1
+	+	80	34
+	+	23	30
+	+	74	25
+	+	81	19
+	+	91	0
+	+	100	0
+	+	101	0
+	+	92	0
+	+	74	23
+
+> ~/chapter7/o/kernel/console.c
+	"	99	0
+	.	99	0
+	+	98	33
+	+	99	0
+
+> ~/chapter7/o/kernel/global.c
+	"	17	0
+	^	18	35
+	.	18	34
+	+	6	68
+	+	4	0
+	+	17	0
+	+	18	34
+
+> ~/chapter7/o/include/proc.h
+	"	52	2
+	^	32	14
+	.	32	13
+	+	32	13
+
+> ~/chapter7/o/kernel/main.
+	"	1	0
+
+> ~/chapter7/o/lib/string.asm
+	"	121	8
+	^	121	9
+	.	125	8
+	+	14	12
+	+	126	3
+	+	121	8
+	+	116	0
+	+	113	10
+	+	115	0
+	+	117	0
+	+	116	21
+	+	117	0
+	+	119	19
+	+	121	0
+	+	123	7
+	+	124	2
+	+	120	5
+	+	125	8
+
+> ~/chapter7/o/include/proto.h
+	"	48	49
+	^	48	50
+	.	48	49
+	+	45	34
+	+	48	49
+
+> ~/chapter7/o/include/string.h
+	"	4	20
+	^	4	21
+	.	4	21
+	+	3	38
+	+	4	21
+
+> ~/chapter7/o/include/type.h
+	"	8	21
+	^	8	22
+	.	8	21
+	+	8	21
+
+> ~/chapter7/o/Makefile
+	"	78	13
+	^	78	14
+	.	78	13
+	+	27	63
+	+	76	0
+	+	78	0
+	+	76	29
+	+	78	13
+
+> ~/chapter7/o/kernel/kernel.asm
+	"	348	13
+	^	348	14
+	.	348	13
+	+	343	26
+	+	346	9
+	+	348	13
+
+> ~/chapter7/o/kernel/tty.c
+	"	116	37
+	^	116	38
+	.	116	37
+	+	125	0
+	+	124	12
+	+	123	52
+	+	120	0
+	+	119	0
+	+	118	1
+	+	117	5
+	+	116	37
+
+> ~/chapter7/o/kernel/syscall.asm
+	"	18	14
+	^	18	15
+	.	18	14
+	+	8	11
+	+	22	4
+	+	2	0
+	+	4	0
+	+	5	0
+	+	6	0
+	+	4	3
+	+	5	14
+	+	13	14
+	+	18	14
+
+> ~/chapter7/o/include/const.h
+	"	91	20
+	^	91	21
+	.	91	20
+	+	91	20
+
+> ~/chapter7/o/kernel/vprintf.c
+	"	46	0
+	^	46	0
+	.	47	0
+	+	47	0
+
+> ~/chapter7/o/kernel/printf.c
+	"	55	0
+	^	55	1
+	.	55	0
+	+	55	0
+
+> ~/chapter7/n/kernel/proc.c
+	"	16	60
+	^	16	61
+	.	16	60
+	+	10	0
+	+	9	59
+	+	16	60
+
+> ~/chapter7/n/kernel/protect.c
+	"	159	36
+	^	159	37
+	.	159	36
+	+	159	36
+
+> ~/chapter7/n/include/proto.h
+	"	41	2
+	^	41	3
+	.	41	2
+	+	43	52
+	+	43	0
+	+	42	0
+	+	41	0
+	+	43	0
+	+	42	0
+	+	41	2
+
+> ~/chapter7/n/kernel/main.c
+	"	61	0
+	^	61	0
+	.	55	0
+	+	11	0
+	+	15	28
+	+	27	2
+	+	22	10
+	+	26	19
+	+	32	41
+	+	34	44
+	+	36	68
+	+	37	68
+	+	38	68
+	+	39	68
+	+	40	68
+	+	41	59
+	+	44	29
+	+	63	0
+	+	52	0
+	+	55	0
+
+> ~/chapter7/n/kernel/keyboard.c
+	"	57	0
+
+> ~/chapter7/n/include/global.h
+	"	22	31
+	^	22	32
+	.	22	31
+	+	22	31
+
+> ~/chapter7/n/include/proc.h
+	"	42	17
+	^	42	18
+	.	42	17
+	+	42	14
+	+	41	17
+	+	42	17
+
+> ~/chapter7/n/kernel/global.c
+	"	13	27
+	^	13	28
+	.	13	27
+	+	18	32
+	+	13	0
+	+	12	0
+	+	18	0
+	+	10	0
+	+	11	0
+	+	10	36
+	+	16	0
+	+	13	27
+
+> ~/chapter7/m/kernel/keyboard.c
+	"	255	4
+	^	255	5
+	.	255	4
+	+	21	21
+	+	27	0
+	+	26	11
+	+	25	27
+	+	26	21
+	+	35	0
+	+	34	29
+	+	33	30
+	+	47	0
+	+	42	0
+	+	47	0
+	+	46	9
+	+	47	0
+	+	281	13
+	+	130	34
+	+	132	3
+	+	134	2
+	+	132	46
+	+	133	19
+	+	135	10
+	+	165	3
+	+	140	5
+	+	166	4
+	+	168	3
+	+	167	17
+	+	169	10
+	+	172	4
+	+	174	3
+	+	173	15
+	+	175	10
+	+	181	11
+	+	187	17
+	+	255	4
+
+> ~/chapter7/m/include/const.h
+	"	89	20
+	^	89	21
+	.	89	20
+	+	90	0
+	+	89	20
+
+> ~/chapter7/l/kernel/console.c
+	"	87	1
+	^	87	2
+	.	87	1
+	+	89	0
+	+	58	0
+	+	60	13
+	+	84	1
+	+	76	9
+	+	83	2
+	+	89	0
+	+	88	0
+	+	54	0
+	+	91	0
+	+	91	29
+	+	91	0
+	+	18	0
+	+	88	13
+	+	69	11
+	+	76	9
+	+	61	11
+	+	68	8
+	+	76	19
+	+	76	35
+	+	76	24
+	+	74	2
+	+	76	0
+	+	71	2
+	+	72	2
+	+	73	2
+	+	74	0
+	+	75	1
+	+	75	0
+	+	68	34
+	+	67	2
+	+	68	0
+	+	87	1
+
+> ~/chapter7/l/kernel/tty.c
+	"	101	0
+	^	53	0
+	.	60	0
+	+	68	24
+	+	104	10
+	+	100	21
+	+	104	3
+	+	103	0
+	+	104	0
+	+	103	21
+	+	62	0
+	+	61	0
+	+	69	0
+	+	53	0
+	+	54	0
+	+	55	25
+	+	55	25
+	+	56	0
+	+	57	0
+	+	58	0
+	+	59	0
+	+	60	0
+
+> ~/chapter7/k/kernel/tty.c
+	"	69	42
+	^	69	43
+	.	69	42
+	+	70	12
+	+	71	0
+	+	69	33
+	+	75	0
+	+	69	42
+
+> ~/chapter7/k/kernel/console.c
+	"	81	2
+	^	81	3
+	.	81	2
+	+	85	0
+	+	83	1
+	+	76	45
+	+	75	53
+	+	76	2
+	+	84	27
+	+	83	46
+	+	81	2
+
+> ~/chapter7/k/include/console.h
+	"	18	23
+	^	18	24
+	.	18	23
+	+	18	23
+
+> ~/chapter7/j/include/proto.h
+	"	40	35
+	^	40	36
+	.	40	35
+	+	38	30
+	+	39	39
+	+	40	35
+
+> ~/chapter7/j/kernel/tty.c
+	"	43	1
+	^	42	21
+	.	42	20
+	+	11	2
+	+	12	2
+	+	13	13
+	+	94	2
+	+	85	1
+	+	98	9
+	+	97	3
+	+	96	35
+	+	95	42
+	+	42	20
+
+> ~/chapter7/j/include/keyboard.h
+	"	18	0
+
+> ~/chapter7/j/kernel/console.c
+	"	68	43
+	^	68	44
+	.	68	43
+	+	39	0
+	+	38	0
+	+	28	0
+	+	21	14
+	+	19	23
+	+	21	33
+	+	22	1
+	+	28	0
+	+	23	34
+	+	24	49
+	+	25	60
+	+	26	42
+	+	27	36
+	+	33	1
+	+	33	0
+	+	31	42
+	+	32	14
+	+	36	1
+	+	34	43
+	+	35	35
+	+	37	23
+	+	29	9
+	+	37	37
+	+	42	47
+	+	46	2
+	+	48	17
+	+	49	0
+	+	49	0
+	+	47	0
+	+	49	24
+	+	70	0
+	+	66	2
+	+	67	35
+	+	68	40
+	+	69	67
+	+	51	0
+	+	52	42
+	+	60	0
+	+	59	13
+	+	58	33
+	+	68	43
+
+> ~/chapter7/j/include/tty.h
+	"	17	0
+	.	17	0
+	+	17	0
+
+> ~/chapter7/j/include/console.h
+	"	11	8
+	^	11	9
+	.	12	0
+	+	12	0
+
+> ~/chapter7/h/kernel/tty.c
+	"	17	6
+	^	26	26
+	.	17	5
+	+	3	0
+	+	5	40
+	+	23	16
+	+	3	0
+	+	3	0
+	+	3	19
+	+	3	12
+	+	24	52
+	+	25	19
+	+	6	0
+	+	13	0
+	+	12	44
+	+	3	0
+	+	1	12
+	+	2	0
+	+	10	54
+	+	3	0
+	+	26	25
+	+	18	0
+	+	17	5
+
+> ~/chapter7/h/kernel/console.c
+	"	18	0
+	^	18	0
+	.	18	0
+	+	1	16
+	+	6	0
+	+	5	56
+	+	30	0
+	+	30	1
+	+	28	1
+	+	30	0
+	+	8	0
+	+	18	0
+
+> ~/chapter7/h/kernel/global.c
+	"	2	14
+	^	2	15
+	.	2	14
+	+	19	0
+	+	3	0
+	+	3	18
+	+	3	0
+	+	3	12
+	+	17	32
+	+	3	0
+	+	3	0
+	+	3	0
+	+	2	14
+
+> ~/chapter7/h/include/all.h
+	"	9	0
+	.	9	0
+	+	1	0
+	+	1	0
+	+	2	18
+	+	5	0
+	+	9	0
+	+	8	0
+	+	9	0
+
+> ~/chapter7/h/kernel/start.c
+	"	3	0
+	^	1	15
+	.	1	14
+	+	2	0
+	+	2	0
+	+	2	16
+	+	2	0
+	+	2	0
+	+	2	0
+	+	1	14
+
+> ~/chapter7/h/include/proto.h
+	"	36	38
+	^	36	39
+	.	36	38
+	+	36	38
+
+> ~/chapter7/h/kernel/keyboard.c
+	"	1	15
+	^	1	16
+	.	143	22
+	+	4	0
+	+	3	0
+	+	1	0
+	+	4	0
+	+	4	0
+	+	3	0
+	+	3	0
+	+	1	0
+	+	3	0
+	+	1	0
+	+	35	28
+	+	143	22
+
+> ~/chapter7/h/Makefile
+	"	27	30
+	^	27	31
+	.	27	30
+	+	29	48
+	+	73	0
+	+	74	31
+	+	27	30
+
+> ~/chapter7/h/include/global.h
+	"	14	30
+	^	14	31
+	.	14	31
+	+	24	32
+	+	14	31
+
+> ~/chapter7/h/include/tty.h
+	"	1	0
+	^	13	19
+	.	13	18
+	+	17	5
+	+	3	0
+	+	15	0
+	+	14	1
+	+	5	18
+	+	14	29
+	+	15	6
+	+	13	18
+
+> ~/chapter7/h/include/keymap.h
+	"	224	0
+
+> ~/chapter7/h/kernel/proc.c
+	"	1	0
+	.	1	0
+	+	1	0
+	+	1	0
+	+	1	0
+	+	1	0
+	+	1	0
+	+	1	0
+
+> ~/chapter7/h/kernel/pro.c
+	"	1	0
+
+> ~/chapter7/h/kernel/clock.c
+	"	1	0
+	.	2	0
+	+	1	0
+	+	2	0
+
+> ~/chapter7/h/kernel/main.c
+	"	1	0
+	^	42	2
+	.	2	0
+	+	42	1
+	+	1	0
+	+	2	0
+
+> ~/chapter7/h/kernel/i8259.c
+	"	1	14
+	^	1	15
+	.	1	14
+	+	1	14
+
+> ~/chapter7/h/kernel/protect.c
+	"	1	12
+	^	1	13
+	.	1	12
+	+	1	12
+
+> ~/chapter7/h/lib/klib.c
+	"	1	15
+	^	1	16
+	.	1	15
+	+	1	1
+	+	10	1
+	+	1	15
+
+> ~/chapter7/h/lib/klib
+	"	1	0
+
+> ~/chapter7/h/include/global.c
+	"	1	0
+
+> ~/chapter7/h/include/const.h
+	"	98	12
+	^	99	0
+	.	98	22
+	+	100	0
+	+	98	22
+
+> ~/chapter7/h/include/console.h
+	"	11	8
+	^	11	9
+	.	11	0
+	+	15	5
+	+	13	57
+	+	3	0
+	+	11	0
+
+> ~/chapter7/g/kernel/tty.c
+	"	42	29
+	^	42	30
+	.	42	0
+	+	29	14
+	+	28	40
+	+	52	1
+	+	31	33
+	+	51	2
+	+	50	9
+	+	44	11
+	+	48	0
+	+	47	12
+	+	48	12
+	+	42	0
+
+> ~/chapter7/g/include/const.h
+	"	64	52
+	^	64	53
+	.	64	39
+	+	65	0
+	+	64	39
+
+> ~/chapter7/e/kernel/keyboard.c
+	"	52	47
+	^	52	48
+	.	52	45
+	+	184	0
+	+	184	1
+	+	184	0
+	+	184	21
+	+	184	0
+	+	184	0
+	+	153	0
+	+	152	1
+	+	52	45
+
+> ~/chapter7/e/kernel/tty.c
+	"	22	10
+	^	22	11
+	.	22	10
+	+	25	0
+	+	20	28
+	+	24	1
+	+	23	18
+	+	22	10
+
+> ~/chapter7/e/include/keyboard.h
+	"	122	5
+	^	122	6
+	.	120	0
+	+	122	0
+	+	120	0
+
+> ~/chapter7/d/kernel/keyboard.c
+	"	136	3
+	^	136	4
+	.	143	0
+	+	25	12
+	+	15	0
+	+	64	20
+	+	77	3
+	+	115	3
+	+	116	0
+	+	52	0
+	+	52	0
+	+	52	0
+	+	51	0
+	+	11	10
+	+	129	30
+	+	144	0
+	+	130	0
+	+	144	0
+	+	144	0
+	+	143	0
+	+	131	0
+	+	133	4
+	+	135	4
+	+	136	4
+	+	137	4
+	+	138	4
+	+	139	4
+	+	140	0
+	+	141	4
+	+	142	4
+	+	143	0
+
 > ~/chapter7/c/kernel/keyboard.c
-	"	52	1
+	"	36	0
 	^	52	2
 	.	52	1
 	+	32	25
@@ -210,6 +966,16 @@ $
 	+	51	2
 	+	52	1
 
+> ~/chapter7/b/kernel/main.c
+	"	53	0
+	^	53	3
+	.	53	0
+	+	48	0
+	+	47	13
+	+	52	0
+	+	52	1
+	+	53	0
+
 > ~/chapter7/c/include/keyboard.h
 	"	9	0
 
@@ -229,15 +995,6 @@ $
 	+	20	0
 	+	18	36
 	+	19	37
-
-> ~/chapter7/b/kernel/main.c
-	"	40	0
-	^	48	1
-	.	48	0
-	+	49	0
-	+	47	13
-	+	54	0
-	+	48	0
 
 > ~/chapter7/b/Makefile
 	"	72	23
@@ -529,555 +1286,3 @@ $
 	+	57	34
 	+	56	49
 	+	57	49
-
-> ~/chapter6/p/include/proc.h
-	"	35	14
-	^	35	15
-	.	29	14
-	+	29	14
-
-> ~/chapter6/o/kernel/clock.c
-	"	15	1
-	^	15	2
-	.	15	1
-	+	12	1
-	+	15	1
-
-> ~/chapter6/o/kernel/main.c
-	"	82	14
-	^	82	15
-	.	82	14
-	+	82	0
-	+	73	0
-	+	64	0
-	+	63	13
-	+	64	16
-	+	73	0
-	+	72	13
-	+	81	13
-	+	82	0
-	+	73	7
-	+	82	14
-
-> ~/chapter6/l/include/const.h
-	"	50	0
-
-> ~/chapter6/n/kernel/main.c
-	"	66	15
-	^	66	16
-	.	66	15
-	+	47	26
-	+	50	23
-	+	66	15
-
-> ~/chapter6/n/include/proto.h
-	"	27	31
-	^	27	32
-	.	27	31
-	+	27	31
-
-> ~/chapter6/n/kernel/clock.c
-	"	23	4
-	^	23	5
-	.	23	4
-	+	27	0
-	+	26	52
-	+	23	4
-
-> ~/chapter6/n/include/const.h
-	"	58	73
-	^	58	74
-	.	58	26
-	+	58	26
-
-> ~/chapter6/m/kernel/main.c
-	"	58	21
-	^	58	22
-	.	58	21
-	+	44	12
-	+	57	0
-	+	58	21
-
-> ~/chapter6/m/kernel/proc.c
-	"	11	1
-	.	11	0
-	+	11	0
-
-> ~/chapter6/m/kernel/clock.c
-	"	13	10
-	^	13	11
-	.	13	10
-	+	11	1
-	+	13	10
-
-> ~/chapter6/m/include/global.h
-	"	13	10
-	^	13	11
-	.	13	10
-	+	13	10
-
-> ~/chapter6/l/kernel/syscall.asm
-	"	9	1
-	^	9	2
-	.	9	1
-	+	1	21
-	+	12	3
-	+	9	1
-
-> ~/chapter6/l/include/proto.h
-	"	24	0
-	^	25	16
-	.	23	0
-	+	26	15
-	+	25	15
-	+	26	0
-	+	23	0
-
-> ~/chapter6/l/kernel/main.c
-	"	56	10
-	^	56	11
-	.	56	5
-	+	56	13
-	+	4	0
-	+	7	0
-	+	56	5
-
-> ~/chapter6/l/Makefile
-	"	78	3
-	^	52	33
-	.	52	32
-	+	26	57
-	+	67	25
-	+	26	74
-	+	52	32
-
-> ~/chapter6/l/include/type.h
-	"	11	24
-	^	11	25
-	.	11	25
-	+	11	25
-
-> ~/chapter6/l/kernel/start.c
-	"	1	0
-
-> ~/chapter6/l/include/protect.h
-	"	10	0
-	^	148	33
-	.	148	32
-	+	148	32
-
-> ~/chapter6/l/include/global.h
-	"	21	1
-	^	21	2
-	.	21	1
-	+	2	0
-	+	21	1
-
-> ~/chapter6/l/kernel/kernel.asm
-	"	28	21
-	^	28	22
-	.	28	21
-	+	329	8
-	+	336	9
-	+	339	9
-	+	340	0
-	+	348	3
-	+	44	14
-	+	28	21
-
-> ~/chapter6/l/kernel/proc.c
-	"	13	0
-	^	13	1
-	.	13	0
-	+	13	0
-
-> ~/chapter6/l/kernel/global.c
-	"	13	56
-	^	13	57
-	.	13	56
-	+	13	56
-
-> ~/chapter6/l/kernel/protect.c
-	"	151	66
-	^	151	67
-	.	151	66
-	+	151	66
-
-> ~/chapter6/k/include/proto.h
-	"	18	24
-	^	18	25
-	.	18	24
-	+	17	25
-	+	21	0
-	+	18	24
-
-> ~/chapter6/k/kernel/main.c
-	"	46	22
-	^	46	23
-	.	46	22
-	+	45	44
-	+	46	22
-
-> ~/chapter6/k/lib/kliba.asm
-	"	13	17
-	^	13	18
-	.	13	7
-	+	182	0
-	+	3	0
-	+	1	0
-	+	13	7
-
-> ~/chapter6/k/kernel/i8259.c
-	"	4	16
-	^	4	17
-	.	4	16
-	+	14	0
-	+	37	1
-	+	37	0
-	+	41	2
-	+	39	1
-	+	47	1
-	+	47	0
-	+	46	31
-	+	63	0
-	+	62	27
-	+	61	17
-	+	6	0
-	+	5	0
-	+	4	16
-
-> ~/chapter6/k/kernel/protect.c
-	"	53	0
-
-> ~/chapter6/k/include/const.h
-	"	48	41
-	^	48	42
-	.	48	23
-	+	37	25
-	+	48	23
-
-> ~/chapter6/k/include/type.h
-	"	10	35
-	^	10	36
-	.	10	35
-	+	10	35
-
-> ~/chapter6/k/include/global.h
-	"	20	31
-	^	20	32
-	.	20	31
-	+	20	31
-
-> ~/chapter6/k/kernel/global.c
-	"	12	30
-	^	12	31
-	.	12	30
-	+	12	30
-
-> ~/chapter6/k/kernel/kernel.asm
-	"	27	15
-	^	27	16
-	.	27	15
-	+	160	0
-	+	153	9
-	+	157	4
-	+	159	3
-	+	163	3
-	+	162	8
-	+	163	0
-	+	178	0
-	+	164	0
-	+	165	0
-	+	166	19
-	+	169	5
-	+	175	14
-	+	26	0
-	+	27	15
-
-> ~/chapter6/j/kernel/kernel.asm
-	"	188	12
-	^	188	13
-	.	178	13
-	+	160	1
-	+	163	21
-	+	176	0
-	+	177	0
-	+	178	13
-
-> ~/chapter6/i/kernel/kernel.asm
-	"	314	0
-	^	351	0
-	.	332	33
-	+	159	9
-	+	160	0
-	+	164	0
-	+	341	7
-	+	341	0
-	+	340	69
-	+	313	2
-	+	333	3
-	+	333	28
-	+	335	0
-	+	334	0
-	+	333	0
-	+	313	0
-	+	336	20
-	+	336	0
-	+	337	0
-	+	338	0
-	+	339	0
-	+	340	0
-	+	351	0
-	+	342	0
-	+	343	0
-	+	344	0
-	+	345	0
-	+	346	0
-	+	347	0
-	+	349	0
-	+	350	0
-	+	332	33
-
-> ~/chapter6/h/kernel/kernel.asm
-	"	345	7
-	^	185	1
-	.	193	0
-	+	329	16
-	+	330	21
-	+	338	16
-	+	339	21
-	+	177	0
-	+	179	5
-	+	182	6
-	+	193	0
-	+	193	0
-
-> ~/chapter6/h/kernel/main.c
-	"	43	13
-	^	43	14
-	.	43	13
-	+	43	13
-
-> ~/chapter6/g/kernel/kernel.asm
-	"	199	1
-	^	212	6
-	.	212	1
-	+	213	1
-	+	213	0
-	+	213	0
-	+	212	1
-
-> ~/chapter6/g/kernel/clock.c
-	"	1	0
-	^	13	16
-	.	13	15
-	+	12	22
-	+	14	1
-	+	15	0
-	+	14	9
-	+	13	15
-
-> ~/chapter6/g/kernel/.kernel.asm.swp
-	"	1	0
-
-> ~/chapter6/d/kernel/kernel.asm
-	"	317	4
-	^	183	19
-	.	183	18
-	+	18	19
-	+	182	6
-	+	183	18
-
-> ~/chapter6/f/kernel/main.c
-	"	80	0
-	^	80	1
-	.	79	0
-	+	60	0
-	+	49	0
-	+	70	0
-	+	71	9
-	+	73	11
-	+	75	12
-	+	80	0
-	+	79	0
-
-> ~/chapter6/f/kernel/global.c
-	"	15	6
-	^	15	7
-	.	15	6
-	+	15	0
-	+	14	37
-	+	15	6
-
-> ~/chapter6/f/include/proc.h
-	"	46	79
-	^	46	80
-	.	46	79
-	+	39	17
-	+	44	25
-	+	46	79
-
-> ~/chapter6/f/include/const.h
-	"	1	0
-
-> ~/chapter6/f/include/protect.h
-	"	150	0
-
-> ~/chapter6/f/include/global.h
-	"	17	0
-
-> ~/chapter6/f/include/proto.h
-	"	15	9
-	^	15	10
-	.	15	9
-	+	15	9
-
-> ~/chapter6/d/kernel/main.c
-	"	24	1
-	^	24	2
-	.	24	1
-	+	70	0
-	+	12	0
-	+	38	0
-	+	26	0
-	+	25	1
-	+	18	1
-	+	16	5
-	+	18	41
-	+	13	27
-	+	18	37
-	+	19	19
-	+	13	24
-	+	18	18
-	+	14	39
-	+	27	0
-	+	20	31
-	+	27	0
-	+	21	1
-	+	27	0
-	+	22	1
-	+	27	0
-	+	23	1
-	+	24	1
-
-> ~/chapter6/d/kernel/clock.c
-	"	14	28
-	^	14	29
-	.	14	28
-	+	15	0
-	+	9	0
-	+	14	28
-
-> ~/chapter6/d/Makefile
-	"	26	43
-	^	26	44
-	.	26	43
-	+	63	27
-	+	26	43
-
-> ~/chapter6/d/kernel/protect.c
-	"	171	24
-	^	171	25
-	.	171	24
-	+	173	0
-	+	172	1
-	+	174	0
-	+	160	0
-	+	174	0
-	+	166	1
-	+	167	1
-	+	168	2
-	+	169	2
-	+	163	4
-	+	166	40
-	+	162	31
-	+	167	53
-	+	171	24
-
-> ~/chapter6/d/include/const.h
-	"	23	0
-
-> ~/chapter6/d/include/proc.h
-	"	45	0
-	^	45	63
-	.	45	62
-	+	39	17
-	+	33	21
-	+	35	16
-	+	43	23
-	+	45	62
-
-> ~/chapter6/d/include/protect.h
-	"	152	0
-
-> ~/chapter6/c/kernel/kernel.asm
-	"	177	11
-	.	177	10
-	+	180	0
-	+	179	3
-	+	193	0
-	+	188	0
-	+	187	11
-	+	17	12
-	+	185	9
-	+	25	16
-	+	174	1
-	+	178	0
-	+	177	10
-
-> ~/chapter6/d/include/global.h
-	"	19	25
-	^	19	26
-	.	19	25
-	+	19	25
-
-> ~/chapter6/d/include/string.h
-	"	3	35
-	^	3	36
-	.	3	36
-	+	3	36
-
-> ~/chapter6/d/lib/string.asm
-	"	13	13
-	^	13	14
-	.	13	13
-	+	110	15
-	+	13	13
-
-> ~/chapter6/d/include/proto.h
-	"	14	12
-	^	14	13
-	.	14	12
-	+	14	12
-
-> ~/chapter6/d/kernel/global.c
-	"	14	34
-	^	14	35
-	.	14	34
-	+	16	0
-	+	12	31
-	+	13	4
-	+	14	2
-	+	13	34
-	+	14	34
-
-> ~/chapter6/d/include/type.h
-	"	9	27
-	^	9	28
-	.	9	27
-	+	9	27
-
-> ~/chapter6/c/kernel/main.c
-	"	12	15
-	^	12	16
-	.	12	15
-	+	12	15
-
-> ~/chapter6/c/include/global.h
-	"	12	22
-	^	12	23
-	.	12	22
-	+	12	22
-
-> ~/chapter6/c/kernel/global.c
-	"	1	0
